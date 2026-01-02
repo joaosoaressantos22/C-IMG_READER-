@@ -4,7 +4,6 @@ import sys
 
 def convert_image(file_path, target_format, size=(0, 0)): 
     directory = os.path.dirname(file_path)
-    print(directory)
     img = Image.open(file_path) 
     if size != (0, 0):
         img = img.resize(size)
@@ -15,13 +14,17 @@ def convert_image(file_path, target_format, size=(0, 0)):
     img.save(new_file_path) 
 
 #Da pra otimizar isso bastante na vdd
-# print((len(sys.argv) - 1))
-try:
-    convert_image(sys.argv[1], "ppm", (int(sys.argv[2]), int(sys.argv[3])))
-    exit()
+def main() -> None:
+    try:
+        convert_image(sys.argv[1], "ppm", (int(sys.argv[2]), int(sys.argv[3])))
+        exit()
 
-except IndexError:  
-    convert_image(sys.argv[1], "ppm", (0, 0))
-    exit()
+    except IndexError:  
+        convert_image(sys.argv[1], "ppm", (0, 0))
+        exit()
 
-print("Error") #Na teoria é pra nunca acontecer!
+    print("Error") #Na teoria é pra nunca acontecer!
+
+
+if __name__ == "__main__":
+    main()

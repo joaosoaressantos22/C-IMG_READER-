@@ -33,6 +33,7 @@ char *replace_format(char *in){
 int main(int argc, char** argv){
 
 	int saida; 
+	char cwd[BUFSIZ]; 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "Erro ao inicializar SDL: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
@@ -41,6 +42,11 @@ int main(int argc, char** argv){
 		printf("You should have atleast one argument, the file name\nOr the file name + widhth and the height of the image\n");
 		exit(EXIT_FAILURE); 
 	}
+
+	if (getcwd(cwd, sizeof(cwd)) == NULL) {
+       perror("getcwd() error");
+       return -1;
+   	}
 	int wait_fork = 0;
 	pid_t pid = fork();
 	if (pid == 0){
@@ -55,9 +61,13 @@ int main(int argc, char** argv){
 	else if (pid < 0) exit(EXIT_FAILURE);
 
 	wait(&wait_fork);
+	if (strstr(argv[1], "/") == NULL){
+		strcpy(argv[1], strcat(strcat(cwd, "/"), argv[1]));
+	}
+
 	char* ppm = replace_format(argv[1]);
 	FILE * f = fopen(ppm, "r");
-	if (f == NULL) exit(EXIT_FAILURE);
+	if (f == NULL)exit(EXIT_FAILURE);
 	char *pthroaway = (char*)calloc(1000, sizeof(char));
 	fgets(pthroaway, 1000, f);
 	free(pthroaway);
