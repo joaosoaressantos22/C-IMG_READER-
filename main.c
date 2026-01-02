@@ -55,7 +55,6 @@ int main(int argc, char** argv){
 	else if (pid < 0) exit(EXIT_FAILURE);
 
 	wait(&wait_fork);
-	
 	char* ppm = replace_format(argv[1]);
 	FILE * f = fopen(ppm, "r");
 	if (f == NULL) exit(EXIT_FAILURE);
