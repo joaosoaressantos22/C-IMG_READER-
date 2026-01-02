@@ -32,17 +32,24 @@ char *replace_format(char *in){
 
 int main(int argc, char** argv){
 
-	printf("%d pid: %d\n", argc, getpid());
-
+	int saida; 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "Erro ao inicializar SDL: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-	if (argc != 2) exit(EXIT_FAILURE); 
+	if (argc != 2 && argc != 4) {
+		printf("You should have atleast one argument, the file name\nOr the file name + widhth and the height of the image\n");
+		exit(EXIT_FAILURE); 
+	}
 	int wait_fork = 0;
 	pid_t pid = fork();
 	if (pid == 0){
-		if ((execlp("python3", "python3", "image_parser.py", argv[1], NULL)) ==  -1) perror("PYTHON ERROR!");
+		if (argc == 2){
+			saida = execlp("python3", "python3", "image_parser.py", argv[1], NULL);
+		}
+		else saida = execlp("python3", "python3", "image_parser.py", argv[1], argv[2], argv[3], NULL);
+
+		if (saida == -1) perror("PYTHON ERROR!"); 
 	}
 
 	else if (pid < 0) exit(EXIT_FAILURE);
@@ -64,6 +71,7 @@ int main(int argc, char** argv){
 	SDL_Window * pwindow = SDL_CreateWindow("Image view", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, pwidth, pheight, 0);
 	SDL_Surface * psurface = SDL_GetWindowSurface(pwindow);
 	Uint32 color = 0;
+
 	SDL_Rect pixel = (SDL_Rect){0, 0, 1, 1}; //Aqui é possível usar threads
 	for (int y = 0; y < pheight; y++){
 		for (int x = 0; x < pwidth; x++){
@@ -94,6 +102,7 @@ int main(int argc, char** argv){
         printf("Couldnt remove file!");
 		return -1;
     }
+	
 	SDL_DestroyWindowSurface(pwindow); 
 	SDL_DestroyWindow(pwindow);
 	SDL_Quit();
