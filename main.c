@@ -4,36 +4,17 @@
 #include <sys/wait.h>
 #include <SDL2/SDL.h>
 #include <string.h>
-
-char *replace_format(char *in){
-	if (in == NULL) return NULL;
-
-    char *dot = strrchr(in, '.');
-    long base_len;
-
-    if (dot) {
-        base_len = dot - in; 
-    } else {
-        base_len = strlen(in); 
-    }
-
-    char *new_str = (char *)malloc(sizeof(char) * base_len + 5);
-
-    if (new_str == NULL) {
-        return NULL; // Falha na alocação de memória
-    }
-
-    strncpy(new_str, in, base_len);
-    new_str[base_len] = '\0'; 
-    strcat(new_str, ".ppm");
-
-    return new_str;
-}
+#include "utils.h"
 
 int main(int argc, char** argv){
 
 	int saida; 
-	char cwd[BUFSIZ]; 
+	char cwd[BUFSIZ];
+
+	if (!strcmp(argv[1], "--help")) {
+		help();
+		return -1;
+	}
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "Erro ao inicializar SDL: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
@@ -50,9 +31,7 @@ int main(int argc, char** argv){
 	int wait_fork = 0;
 	pid_t pid = fork();
 	if (pid == 0){
-		if (argc == 2){
-			saida = execlp("python3", "python3", "image_parser.py", argv[1], NULL);
-		}
+		if (argc == 2) saida = execlp("python3", "python3", "image_parser.py", argv[1], NULL);
 		else saida = execlp("python3", "python3", "image_parser.py", argv[1], argv[2], argv[3], NULL);
 
 		if (saida == -1) perror("PYTHON ERROR!"); 

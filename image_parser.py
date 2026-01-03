@@ -13,17 +13,16 @@ def convert_image(file_path, target_format, size=(0, 0)):
     new_file_path = f"{file_name}.{target_format}" if directory == '' else f"{directory}/{file_name}.{target_format}" 
     img.save(new_file_path) 
 
-#Da pra otimizar isso bastante na vdd
+
 def main() -> None:
-    try:
+
+    if len(sys.argv) > 2:
         convert_image(sys.argv[1], "ppm", (int(sys.argv[2]), int(sys.argv[3])))
         exit()
 
-    except IndexError:  
-        convert_image(sys.argv[1], "ppm", (0, 0))
+    else: 
+        convert_image(sys.argv[1], "ppm")
         exit()
-
-    print("Error") #Na teoria é pra nunca acontecer!
 
 
 if __name__ == "__main__":
